@@ -4,6 +4,7 @@
 - [x] Build Home academic feed
 - [x] Build Courses list and Course Workspace
 - [x] Upgrade course cards and all five workspace tabs
+- [ ] Deepen Course Workspace progress, deadlines, and resource management
 - [x] Build weekly Calendar
 - [x] Build Tasks manager interactions
 - [x] Build Library categories and search
