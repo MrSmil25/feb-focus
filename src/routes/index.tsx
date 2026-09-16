@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   ArrowLeft, BookOpen, CalendarDays, Check, CheckCircle2, ChevronRight, Clock3,
-  FileText, GraduationCap, Home, Library, Link2, ListTodo, MapPin, MoreHorizontal,
+  FileText, GraduationCap, Hand, Home, Library, Link2, ListTodo, MapPin, MoreHorizontal,
   Plus, Search, Sparkles, UserRound, X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -101,8 +101,8 @@ function BottomNav({ view, navigate }: { view: View; navigate: (view: View) => v
   return <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-border bg-surface/95 px-2 pt-2 shadow-[0_-8px_24px_color-mix(in_oklab,var(--academic)_8%,transparent)] backdrop-blur md:hidden">{navItems.map(({ id, label, icon: Icon }) => <button key={id} onClick={() => navigate(id)} aria-label={label} className={`flex min-w-0 flex-col items-center gap-1 py-1 text-[10px] font-semibold transition-colors ${view === id ? "text-academic" : "text-muted-foreground"}`}><span className={`grid size-8 place-items-center rounded-xl ${view === id ? "bg-primary" : ""}`}><Icon className="size-4" /></span>{label}</button>)}</nav>;
 }
 
-function MobileTop({ eyebrow, title, action }: { eyebrow: string; title: string; action?: React.ReactNode }) {
-  return <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 md:hidden"><div className="min-w-0"><p className="mb-1 text-xs font-semibold uppercase text-academic">{eyebrow}</p><h1 className="truncate text-2xl font-bold">{title}</h1></div>{action}</div>;
+function MobileTop({ eyebrow, title, action }: { eyebrow: string; title: React.ReactNode; action?: React.ReactNode }) {
+  return <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 md:hidden"><div className="min-w-0"><p className="mb-1 text-xs font-semibold uppercase text-academic">{eyebrow}</p><h1 className="flex flex-wrap items-center gap-2 text-2xl font-bold leading-8">{title}</h1></div>{action}</div>;
 }
 
 function SectionHeader({ title, action }: { title: string; action?: React.ReactNode }) { return <div className="mb-3 flex items-center justify-between gap-3"><h2 className="text-base font-bold md:text-lg">{title}</h2>{action}</div>; }
@@ -118,10 +118,10 @@ function HomeView({ tasks, toggleTask, navigate }: { tasks: Task[]; toggleTask: 
   ];
 
   return <div>
-    <MobileTop eyebrow="Wednesday, 16 September" title="Good Morning, Rasyid 👋" action={<div className="grid size-10 place-items-center rounded-full bg-academic text-xs font-bold text-academic-foreground">RS</div>} />
+    <MobileTop eyebrow="Wednesday, 16 September" title={<>Good Morning, Rasyid <Hand aria-label="waving hand" className="size-5 text-warning" /></>} action={<div className="grid size-10 place-items-center rounded-full bg-academic text-xs font-bold text-academic-foreground">RS</div>} />
     <section className="mb-8 overflow-hidden rounded-2xl bg-academic p-5 text-academic-foreground shadow-lg md:p-8">
       <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-        <div className="min-w-0"><div className="flex items-center gap-2 text-xs font-semibold opacity-80"><span className="size-2 rounded-full bg-primary" />SEMESTER GASAL 2026/2027</div><h1 className="mt-3 hidden text-3xl font-bold md:block">Good Morning, Rasyid 👋</h1><p className="mt-2 text-sm opacity-85">Manajemen FEB UI</p></div>
+        <div className="min-w-0"><div className="flex items-center gap-2 text-xs font-semibold opacity-80"><span className="size-2 rounded-full bg-primary" />SEMESTER GASAL 2026/2027</div><h1 className="mt-3 hidden items-center gap-3 text-3xl font-bold md:flex">Good Morning, Rasyid <Hand aria-label="waving hand" className="size-7 text-primary" /></h1><p className="mt-2 text-sm opacity-85">Manajemen FEB UI</p></div>
         <div className="grid grid-cols-3 gap-2 md:min-w-80"><DashboardStat label="Current semester" value="Semester 1" /><DashboardStat label="Total credits" value="24 SKS" /><DashboardStat label="Progress" value="60%" /></div>
       </div>
       <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-academic-foreground/20"><div className="h-full w-3/5 rounded-full bg-primary" /></div>
