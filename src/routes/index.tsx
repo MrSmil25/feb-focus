@@ -62,7 +62,7 @@ function AcademicApp() {
   const toggleTask = (id: number) => setTasks((items) => items.map((task) => task.id === id ? { ...task, done: !task.done } : task));
   const addTask = () => {
     if (!newTask.trim()) return;
-    setTasks((items) => [...items, { id: Date.now(), title: newTask.trim(), course: "Personal study", due: "24 Sep", priority: "Medium", done: false }]);
+    setTasks((items) => [...items, { id: Date.now(), title: newTask.trim(), course: "Personal study", due: "Today", priority: "Medium", done: false }]);
     setNewTask(""); setShowAdd(false); setView("tasks");
   };
 
