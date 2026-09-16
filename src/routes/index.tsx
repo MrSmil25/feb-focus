@@ -13,15 +13,16 @@ type View = "home" | "courses" | "calendar" | "tasks" | "library";
 type Task = { id: number; title: string; course: string; due: string; priority: "High" | "Medium"; done: boolean };
 type CourseTask = { id: number; title: string; due: string; priority: "High" | "Medium"; status: "Not started" | "In progress" | "Completed" };
 type CourseNote = { id: number; title: string; topic: string; body: string; attachment?: string };
-type CourseMaterial = { title: string; type: "Textbook" | "PDF" | "Slides" | "Important link"; description: string; action: string };
+type CourseMaterial = { id: number; title: string; type: "Textbook" | "PDF" | "Slides" | "External link" | "Article"; description: string; attachment: string };
 type CourseEvent = { type: "Lecture" | "Assistant" | "Exam"; title: string; day: string; time: string; room: string; date?: string };
 type Course = { code: string; title: string; sks: number; lecturer: string; assistant: string; day: string; time: string; room: string; accent: string; tasks: CourseTask[]; materials: CourseMaterial[]; notes: CourseNote[]; events: CourseEvent[] };
 
 const materialSet: CourseMaterial[] = [
-  { title: "Core textbook — selected chapters", type: "Textbook", description: "Required reading and weekly chapter guide.", action: "Open reading" },
-  { title: "Week 5 course brief", type: "PDF", description: "Discussion framework and learning objectives · 2.4 MB", action: "Download" },
-  { title: "Lecture slides — Week 5", type: "Slides", description: "Class deck with lecturer annotations · 36 slides", action: "Open slides" },
-  { title: "Case study reference", type: "Important link", description: "Supplementary industry case for the next discussion.", action: "Visit link" },
+  { id: 1, title: "Core textbook — selected chapters", type: "Textbook", description: "Required reading and weekly chapter guide.", attachment: "Reading guide.pdf" },
+  { id: 2, title: "Week 5 course brief", type: "PDF", description: "Discussion framework and learning objectives.", attachment: "Week-5-brief.pdf" },
+  { id: 3, title: "Lecture slides — Week 5", type: "Slides", description: "Class deck with lecturer annotations.", attachment: "36 slides" },
+  { id: 4, title: "Case study reference", type: "External link", description: "Supplementary industry case for the next discussion.", attachment: "Open reference" },
+  { id: 5, title: "Building customer value", type: "Article", description: "A short companion reading for this week’s topic.", attachment: "Article link" },
 ];
 
 const courses: Course[] = [
