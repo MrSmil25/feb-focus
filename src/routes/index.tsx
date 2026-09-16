@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   ArrowLeft, BookOpen, CalendarDays, Check, CheckCircle2, ChevronRight, Clock3,
-  FileText, GraduationCap, Home, Library, Link2, ListTodo, MapPin, MoreHorizontal,
+  FileText, GraduationCap, Hand, Home, Library, Link2, ListTodo, MapPin, MoreHorizontal,
   Plus, Search, Sparkles, UserRound, X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -72,7 +72,7 @@ function AcademicApp() {
       <main className="mx-auto w-full max-w-6xl px-4 py-5 sm:px-6 md:py-8">
         {workspace ? <CourseWorkspace course={workspace} onBack={() => setWorkspace(null)} /> : (
           <div key={view} className="page-enter">
-            {view === "home" && <HomeView tasks={tasks} toggleTask={toggleTask} openCourses={() => navigate("courses")} />}
+            {view === "home" && <HomeView tasks={tasks} toggleTask={toggleTask} navigate={navigate} />}
             {view === "courses" && <CoursesView onOpen={setWorkspace} />}
             {view === "calendar" && <CalendarView />}
             {view === "tasks" && <TasksView tasks={tasks} toggleTask={toggleTask} showAdd={showAdd} setShowAdd={setShowAdd} newTask={newTask} setNewTask={setNewTask} addTask={addTask} />}
@@ -101,23 +101,47 @@ function BottomNav({ view, navigate }: { view: View; navigate: (view: View) => v
   return <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-border bg-surface/95 px-2 pt-2 shadow-[0_-8px_24px_color-mix(in_oklab,var(--academic)_8%,transparent)] backdrop-blur md:hidden">{navItems.map(({ id, label, icon: Icon }) => <button key={id} onClick={() => navigate(id)} aria-label={label} className={`flex min-w-0 flex-col items-center gap-1 py-1 text-[10px] font-semibold transition-colors ${view === id ? "text-academic" : "text-muted-foreground"}`}><span className={`grid size-8 place-items-center rounded-xl ${view === id ? "bg-primary" : ""}`}><Icon className="size-4" /></span>{label}</button>)}</nav>;
 }
 
-function MobileTop({ eyebrow, title, action }: { eyebrow: string; title: string; action?: React.ReactNode }) {
-  return <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 md:hidden"><div className="min-w-0"><p className="mb-1 text-xs font-semibold uppercase text-academic">{eyebrow}</p><h1 className="truncate text-2xl font-bold">{title}</h1></div>{action}</div>;
+function MobileTop({ eyebrow, title, action }: { eyebrow: string; title: React.ReactNode; action?: React.ReactNode }) {
+  return <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 md:hidden"><div className="min-w-0"><p className="mb-1 text-xs font-semibold uppercase text-academic">{eyebrow}</p><h1 className="flex flex-wrap items-center gap-2 text-2xl font-bold leading-8">{title}</h1></div>{action}</div>;
 }
 
 function SectionHeader({ title, action }: { title: string; action?: React.ReactNode }) { return <div className="mb-3 flex items-center justify-between gap-3"><h2 className="text-base font-bold md:text-lg">{title}</h2>{action}</div>; }
 
-function HomeView({ tasks, toggleTask, openCourses }: { tasks: Task[]; toggleTask: (id: number) => void; openCourses: () => void }) {
+function HomeView({ tasks, toggleTask, navigate }: { tasks: Task[]; toggleTask: (id: number) => void; navigate: (view: View) => void }) {
+  const openTasks = tasks.filter((task) => !task.done);
+  const featuredTask = openTasks[0];
+  const quickActions = navItems.filter((item) => item.id !== "home");
+  const upcoming = [
+    { label: "Next class", day: "Today", time: "11:00 – 13:30", title: "Manajemen Produk dan Harga", room: "A.212", color: "bg-academic" },
+    { label: "Tomorrow", day: "Thursday", time: "08:00 – 10:30", title: "Perencanaan Pemasaran", room: "B.110", color: "bg-primary" },
+    { label: "Tomorrow", day: "Thursday", time: "14:00 – 16:30", title: "Metode Riset Bisnis", room: "B.101", color: "bg-warning" },
+  ];
+
   return <div>
-    <MobileTop eyebrow="Wednesday, 16 September" title="Good Morning, Rasyid 👋" action={<div className="grid size-10 place-items-center rounded-full bg-academic text-xs font-bold text-academic-foreground">RS</div>} />
-    <section className="mb-7 overflow-hidden rounded-2xl bg-academic p-5 text-academic-foreground shadow-lg md:p-8"><div className="flex items-center gap-2 text-xs font-semibold opacity-80"><span className="size-2 rounded-full bg-primary" />SEMESTER GASAL 2026/2027</div><h1 className="mt-3 hidden text-3xl font-bold md:block">Good Morning, Rasyid 👋</h1><p className="mt-2 max-w-xl text-sm opacity-85">Manajemen FEB UI · Week 5 of 16</p><div className="mt-5 h-1.5 overflow-hidden rounded-full bg-academic-foreground/20"><div className="h-full w-[31%] rounded-full bg-primary" /></div></section>
-    <div className="grid gap-7 lg:grid-cols-[minmax(0,1.55fr)_minmax(280px,0.85fr)]"><div className="space-y-7">
-      <section><SectionHeader title="Today’s schedule" action={<button onClick={() => openCourses()} className="text-xs font-semibold text-academic">View courses</button>} /><article className="academic-card overflow-hidden"><div className="flex"><div className="w-2 shrink-0 bg-primary" /><div className="min-w-0 flex-1 p-4 sm:p-5"><div className="mb-4 flex items-center justify-between"><span className="rounded-full bg-accent px-2.5 py-1 text-xs font-semibold text-academic">08:00 — 10:30</span><MoreHorizontal className="size-5 text-muted-foreground" /></div><h3 className="text-lg font-bold">Akuntansi Manajemen untuk Bisnis</h3><div className="mt-4 grid gap-3 text-sm text-muted-foreground sm:grid-cols-2"><span className="flex items-center gap-2"><MapPin className="size-4 text-academic" />Room A.303</span><span className="flex items-center gap-2"><UserRound className="size-4 text-academic" />Rahfiani Khairurzka</span></div></div></div></article></section>
-      <section><SectionHeader title="Up next" /><div className="academic-card divide-y divide-border">{[{ time: "11:00", title: "Manajemen Produk dan Harga", meta: "A.212 · Lecture" }, { time: "13:00", title: "Assistant session", meta: "Online · Bisnis Internasional" }].map((item) => <div key={item.title} className="grid grid-cols-[3.4rem_minmax(0,1fr)_auto] items-center gap-3 p-4"><span className="text-xs font-bold text-academic">{item.time}</span><div className="min-w-0"><p className="truncate text-sm font-semibold">{item.title}</p><p className="mt-1 text-xs text-muted-foreground">{item.meta}</p></div><ChevronRight className="size-4 text-muted-foreground" /></div>)}</div></section>
-      <section><SectionHeader title="Academic tasks" action={<span className="text-xs text-muted-foreground">{tasks.filter(t => !t.done).length} open</span>} /><div className="space-y-2">{tasks.filter(t => !t.done).slice(0,3).map(task => <TaskRow key={task.id} task={task} toggleTask={toggleTask} />)}</div></section>
-    </div><aside className="space-y-7"><section><SectionHeader title="Academic progress" /><div className="academic-card p-5"><div className="mb-5 flex items-end justify-between"><div><p className="text-xs text-muted-foreground">SKS completed</p><p className="mt-1 font-display text-3xl font-bold">92<span className="text-sm text-muted-foreground"> / 144</span></p></div><span className="rounded-full bg-accent px-2.5 py-1 text-xs font-semibold text-academic">64%</span></div><Progress value={64} className="h-2" /><div className="mt-6 grid grid-cols-2 gap-3"><Metric label="Semester" value="31%" /><Metric label="Courses" value="8 active" /></div></div></section><section><SectionHeader title="Study next" /><div className="rounded-2xl bg-primary p-5 text-primary-foreground shadow-md"><Sparkles className="size-5" /><h3 className="mt-8 text-lg font-bold">Pricing strategy notes</h3><p className="mt-2 text-xs leading-5 opacity-75">Continue your summary before Tuesday’s lecture.</p><Button variant="academic" size="sm" className="mt-4">Open notes <ChevronRight /></Button></div></section></aside></div>
+    <MobileTop eyebrow="Wednesday, 16 September" title={<>Good Morning, Rasyid <Hand aria-label="waving hand" className="size-5 text-warning" /></>} action={<div className="grid size-10 place-items-center rounded-full bg-academic text-xs font-bold text-academic-foreground">RS</div>} />
+    <section className="mb-8 overflow-hidden rounded-2xl bg-academic p-5 text-academic-foreground shadow-lg md:p-8">
+      <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+        <div className="min-w-0"><div className="flex items-center gap-2 text-xs font-semibold opacity-80"><span className="size-2 rounded-full bg-primary" />SEMESTER GASAL 2026/2027</div><h1 className="mt-3 hidden items-center gap-3 text-3xl font-bold md:flex">Good Morning, Rasyid <Hand aria-label="waving hand" className="size-7 text-primary" /></h1><p className="mt-2 text-sm opacity-85">Manajemen FEB UI</p></div>
+        <div className="grid grid-cols-3 gap-2 md:min-w-80"><DashboardStat label="Current semester" value="Semester 1" /><DashboardStat label="Total credits" value="24 SKS" /><DashboardStat label="Progress" value="60%" /></div>
+      </div>
+      <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-academic-foreground/20"><div className="h-full w-3/5 rounded-full bg-primary" /></div>
+    </section>
+
+    <div className="space-y-8">
+      <section><SectionHeader title="Today’s focus" action={<button onClick={() => navigate("calendar")} className="text-xs font-semibold text-academic">Full schedule</button>} /><article className="academic-card overflow-hidden"><div className="flex"><div className="w-2 shrink-0 bg-primary" /><div className="min-w-0 flex-1 p-5 md:p-6"><div className="grid gap-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-start"><div><p className="text-xs font-semibold uppercase text-muted-foreground">Today</p><p className="mt-1 font-display text-xl font-bold text-academic">08:00</p><p className="text-xs text-muted-foreground">until 10:30</p></div><div className="min-w-0 sm:border-l sm:border-border sm:pl-6"><span className="inline-flex items-center gap-2 rounded-full bg-accent px-2.5 py-1 text-xs font-semibold text-academic"><span className="size-1.5 rounded-full bg-primary" />Lecture</span><h3 className="mt-3 text-lg font-bold md:text-xl">Akuntansi Manajemen untuk Bisnis</h3><div className="mt-4 grid gap-3 text-sm text-muted-foreground sm:grid-cols-2"><span className="flex items-center gap-2"><MapPin className="size-4 text-academic" />Room A.303</span><span className="flex items-center gap-2"><UserRound className="size-4 text-academic" />Rahfiani Khairurzka</span></div></div></div></div></div></article></section>
+
+      <section><SectionHeader title="Upcoming classes" /><div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">{upcoming.map((item) => <article key={item.time + item.title} className="academic-card min-w-[78%] snap-start overflow-hidden sm:min-w-72"><div className={`h-1.5 ${item.color}`} /><div className="p-4"><div className="flex items-center justify-between text-xs"><span className="font-semibold text-academic">{item.label}</span><span className="text-muted-foreground">{item.day}</span></div><h3 className="mt-4 min-h-10 text-sm font-bold leading-5">{item.title}</h3><div className="mt-4 flex items-center justify-between border-t border-border pt-3 text-xs text-muted-foreground"><span className="flex items-center gap-1.5"><Clock3 className="size-3.5" />{item.time}</span><span className="flex items-center gap-1.5"><MapPin className="size-3.5" />{item.room}</span></div></div></article>)}</div></section>
+
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.85fr)]"><section><SectionHeader title="Task center" action={<button onClick={() => navigate("tasks")} className="text-xs font-semibold text-academic">All tasks · {openTasks.length}</button>} />{featuredTask ? <article className="academic-card p-5"><div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3"><button onClick={() => toggleTask(featuredTask.id)} aria-label={`Complete ${featuredTask.title}`} className="mt-0.5 grid size-6 place-items-center rounded-full border border-input bg-background" /><div className="min-w-0"><div className="flex flex-wrap items-start justify-between gap-2"><div><h3 className="text-base font-bold">{featuredTask.title}</h3><p className="mt-1 text-xs text-muted-foreground">{featuredTask.course}</p></div><div className="flex gap-2"><span className="rounded-full bg-accent px-2.5 py-1 text-[10px] font-semibold text-academic">Due {featuredTask.due}</span><span className="rounded-full bg-destructive/10 px-2.5 py-1 text-[10px] font-semibold text-destructive">{featuredTask.priority}</span></div></div><div className="mt-5 flex items-center gap-3"><Progress value={60} className="h-2 flex-1" /><span className="text-xs font-bold text-academic">60%</span></div></div></div></article> : <div className="academic-card p-6 text-center text-sm text-muted-foreground">Everything is complete. You’re ready for class.</div>}</section>
+
+        <section><SectionHeader title="Academic progress" /><div className="academic-card p-5"><div className="flex items-center justify-between"><div><p className="text-xs text-muted-foreground">Semester progress</p><p className="mt-1 font-display text-3xl font-bold">60%</p></div><div className="grid size-16 place-items-center rounded-full border-8 border-accent text-xs font-bold text-academic">60%</div></div><Progress value={60} className="mt-5 h-2" /><div className="mt-5 grid grid-cols-3 gap-2"><Metric label="Completed SKS" value="14" /><Metric label="Courses" value="8" /><Metric label="Tasks left" value={String(openTasks.length)} /></div></div></section></div>
+
+      <section><SectionHeader title="Quick actions" /><div className="grid grid-cols-4 gap-2 sm:gap-3">{quickActions.map(({ id, label, icon: Icon }) => <button key={id} onClick={() => navigate(id)} className="academic-card flex min-w-0 flex-col items-center gap-2 px-2 py-4 text-center transition-transform hover:-translate-y-0.5"><span className="grid size-9 place-items-center rounded-xl bg-accent text-academic"><Icon className="size-4" /></span><span className="w-full truncate text-[11px] font-semibold sm:text-xs">{label}</span></button>)}</div></section>
+    </div>
   </div>;
 }
+
+function DashboardStat({ label, value }: { label: string; value: string }) { return <div className="min-w-0 rounded-xl bg-academic-foreground/10 p-3"><p className="truncate text-[9px] opacity-70">{label}</p><p className="mt-1 truncate text-xs font-bold">{value}</p></div>; }
 
 function Metric({ label, value }: { label: string; value: string }) { return <div className="rounded-xl bg-muted p-3"><p className="text-xs text-muted-foreground">{label}</p><p className="mt-1 text-sm font-bold">{value}</p></div>; }
 
